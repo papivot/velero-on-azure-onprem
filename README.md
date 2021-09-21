@@ -4,10 +4,13 @@
 
 ```bash
 # Create RESOURCE GROUP
+
 AZURE_BACKUP_RESOURCE_GROUP=kubernetes
 az group create -n $AZURE_BACKUP_RESOURCE_GROUP --location eastus
 ```
 
+```bash
+# Create STORAGE ACCOUNT
 
 AZURE_STORAGE_ACCOUNT_ID="velero$(uuidgen | cut -d '-' -f5 | tr '[A-Z]' '[a-z]')"
 az storage account create \
@@ -18,11 +21,19 @@ az storage account create \
 --https-only true \
 --kind BlobStorage \
 --access-tier Hot
+```
+
+```bash
+# Create Blob container
 
 BLOB_CONTAINER=velero
 az storage container create -n $BLOB_CONTAINER\
 --public-access off \
 --account-name $AZURE_STORAGE_ACCOUNT_ID
+```
+
+```bash
+# Create secrets files
 
 AZURE_SUBSCRIPTION_ID=`az account list --query '[?isDefault].id' -o tsv`
 AZURE_TENANT_ID=`az account list --query '[?isDefault].tenantId' -o tsv`
@@ -32,9 +43,7 @@ AZURE_CLIENT_SECRET=`az ad sp create-for-rbac \
 --query 'password' -o tsv \
 --scopes /subscriptions/$AZURE_SUBSCRIPTION_ID`
 AZURE_CLIENT_ID=`az ad sp list --display-name "velero-navneet" --query '[0].appId' -o tsv`
-```
 
-```
 cat << EOF  > ./credentials-velero
 AZURE_SUBSCRIPTION_ID=${AZURE_SUBSCRIPTION_ID}
 AZURE_TENANT_ID=${AZURE_TENANT_ID}
@@ -45,7 +54,7 @@ AZURE_CLOUD_NAME=AzurePublicCloud
 EOF
 ```
 
-1. Install Velero on the Azure cluster
+2. Install Velero on the Azure cluster
 
 ```bash
 velero install \
@@ -58,6 +67,8 @@ velero install \
 --use-restic \ 
 --wait
 ```
+
+
 
 ```bash 
 export MINIO_ROOT_USER=storage-name
