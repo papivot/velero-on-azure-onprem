@@ -1,6 +1,6 @@
 # Installing Velero on Azure (and using Minio to forward on-prem backup to the AZ storage)
 
-1. Prepare secret file 
+1. Create Storage (optional)
 
 ```bash
 # Create RESOURCE GROUP
@@ -31,6 +31,8 @@ az storage container create -n $BLOB_CONTAINER\
 --public-access off \
 --account-name $AZURE_STORAGE_ACCOUNT_ID
 ```
+
+2. Prepare secret file 
 
 ```bash
 # Create secrets files
@@ -68,7 +70,7 @@ velero install \
 --wait
 ```
 
-
+3. Install Minio as gateway on the on-prem enviornment
 
 ```bash 
 AZURE_STORAGE_ACCOUNT_KEY=`az storage account keys list --account-name ${AZURE_STORAGE_ACCOUNT_ID} |jq -r '.[0].value'`
