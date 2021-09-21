@@ -71,7 +71,9 @@ velero install \
 
 
 ```bash 
-export MINIO_ROOT_USER=storage-name
-export MINIO_ROOT_PASSWORD=wuiU....Z7w==
+AZURE_STORAGE_ACCOUNT_KEY=`az storage account keys list --account-name ${AZURE_STORAGE_ACCOUNT_ID} |jq -r '.[0].value'`
+
+export MINIO_ROOT_USER=${AZURE_STORAGE_ACCOUNT_ID}
+export MINIO_ROOT_PASSWORD=${AZURE_STORAGE_ACCOUNT_KEY}
 minio gateway azure --address 10.197.107.62:9000
 ```
