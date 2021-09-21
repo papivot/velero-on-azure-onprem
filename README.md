@@ -3,8 +3,11 @@
 1. Prepare secret file 
 
 ```bash
+# Create RESOURCE GROUP
 AZURE_BACKUP_RESOURCE_GROUP=kubernetes
 az group create -n $AZURE_BACKUP_RESOURCE_GROUP --location eastus
+```
+
 
 AZURE_STORAGE_ACCOUNT_ID="velero$(uuidgen | cut -d '-' -f5 | tr '[A-Z]' '[a-z]')"
 az storage account create \
