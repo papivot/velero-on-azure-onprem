@@ -3,7 +3,7 @@
 1. Create Storage (optional)
 
 ```bash
-# Create RESOURCE GROUP
+# Create AZURE RESOURCE GROUP
 
 AZURE_BACKUP_RESOURCE_GROUP=kubernetes
 az group create -n $AZURE_BACKUP_RESOURCE_GROUP --location eastus
