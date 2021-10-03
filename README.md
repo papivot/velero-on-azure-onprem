@@ -12,8 +12,7 @@ az group create -n $AZURE_BACKUP_RESOURCE_GROUP --location eastus
 ```
 
 ```bash
-# Create STORAGE ACCOUNT
-
+# Create STORAGE ACCOUNT (if not present already) 
 AZURE_STORAGE_ACCOUNT_ID="velero$(uuidgen | cut -d '-' -f5 | tr '[A-Z]' '[a-z]')"
 az storage account create \
 --name $AZURE_STORAGE_ACCOUNT_ID \
@@ -24,13 +23,14 @@ az storage account create \
 --kind BlobStorage \
 --access-tier Hot
 
-ZURE_STORAGE_ACCOUNT_ID=`az storage account list  --query '[0].name' -o tsv`
+# Get the AZURE_STORAGE_ACCOUNT_ID (if already exits)
+AZURE_STORAGE_ACCOUNT_ID=`az storage account list  --query '[0].name' -o tsv`
 ```
 
 ```bash
-# Create Blob container
-
 BLOB_CONTAINER=velero
+
+# Create Blob container (if it does not exist already)
 az storage container create -n $BLOB_CONTAINER\
 --public-access off \
 --account-name $AZURE_STORAGE_ACCOUNT_ID
@@ -63,7 +63,7 @@ AZURE_CLOUD_NAME=AzurePublicCloud
 EOF
 ```
 
-2. Install Velero on the Azure cluster
+3. Install Velero on the Azure cluster
 
 ```bash
 velero install \
@@ -79,7 +79,7 @@ velero install \
 --wait
 ```
 
-3. Validate that the Install is successfull and the backup location is available 
+4. Validate that the Install is successfull and the backup location is available 
 ```bash
 $ kubectl get pods -n velero    
 
@@ -95,6 +95,51 @@ default   azure      velero          Available   2021-10-03 20:06:44 +0000 UTC  
 ```
 
 ## vSphere with Tanzu configuration (Source cluster)
+
+1. Copy the `credentials-velero` from the Azure install (see above) to the jumpbox where the cluster will be configured. 
+
+2. Install velero on the source cluster using the same enviornmental variables as above - 
+
+```bash
+velero install \
+--provider azure \
+--plugins harbor.navneetv.com/proxy_cache/velero/velero-plugin-for-microsoft-azure \
+--bucket velero \
+--image harbor.navneetv.com/proxy_cache/velero/velero:v1.7.0 \
+--secret-file ./credentials-velero \
+--backup-location-config   resourceGroup=$AZURE_BACKUP_RESOURCE_GROUP,subscriptionId=$AZURE_SUBSCRIPTION_ID,storageAccount=$AZURE_STORAGE_ACCOUNT_ID \
+--snapshot-location-config resourceGroup=$AZURE_BACKUP_RESOURCE_GROUP,subscriptionId=$AZURE_SUBSCRIPTION_ID \
+--features=EnableAPIGroupVersions \
+--default-volumes-to-restic \
+--use-restic
+```
+Note the difference in how the images are referenced using Harbor's Proxy cache feature (if you are encountering the Docker rate limiting issue). Modify the value accordingly to use a private registry.
+
+```
+--plugins harbor.navneetv.com/proxy_cache/velero/velero-plugin-for-microsoft-azure
+--image   harbor.navneetv.com/proxy_cache/velero/velero:v1.7.0 
+```
+
+3. Validate that the Install is successfull and the backup location is available 
+```bash
+$ kubectl get pods -n velero    
+
+NAMESPACE     NAME                                                              READY   STATUS    RESTARTS   AGE
+
+velero                         restic-mfs9v                                                          1/1     Running     0          18s
+velero                         restic-qqgt8                                                          1/1     Running     0          18s
+velero                         velero-564f9f8b9b-gcbpz                                               1/1     Running     0          18s
+
+$ velero backup-location get                                                                                                                                       
+
+NAME      PROVIDER   BUCKET/PREFIX   PHASE       LAST VALIDATED                  ACCESS MODE   DEFAULT
+default   azure      velero          Available   2021-10-03 16:45:47 -0400 EDT   ReadWrite     true
+```
+
+
+
+---
+
 
 3. Install Minio as gateway on the on-prem enviornment
 
