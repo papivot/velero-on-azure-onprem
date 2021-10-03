@@ -238,7 +238,7 @@ Restic Backups:
 ---
 ## Restore on the destination cluster
 
-To make sure that Restic volumes get mapped to the correct destination storage class, create a config map similar to the one below on the destination cluster before performing a restore. 
+To make sure that restic volumes get mapped to the correct destination storage class, create a config map similar to the one below on the destination cluster before performing a restore. 
 ```yaml
 apiVersion: v1
 kind: ConfigMap
@@ -256,7 +256,7 @@ data:
   
 ```
 
-1. Restore from the backup that was cresated previosuly. 
+1. Restore from the backup that was created previously. 
 ```
 $ velero restore create --from-backup nginx-backup
 
@@ -276,7 +276,7 @@ nginx-example   nginx-deployment-7676db6c4d-ghws5                               
 
 ---
 
-### additonal steps (if using Minio as a Azure blob gateway)
+### (DO NOT USE) additonal steps (if using Minio as a Azure blob gateway)
 
 3. Install Minio as a gateway on the on-prem environment
 
