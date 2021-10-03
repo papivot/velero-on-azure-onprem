@@ -49,7 +49,7 @@ AZURE_CLIENT_SECRET=`az ad sp create-for-rbac \
 --query 'password' -o tsv \
 --scopes /subscriptions/$AZURE_SUBSCRIPTION_ID`
 
-### remember to save the secret as you cannot retrive it back 
+### remember to save the secret as you cannot retrieve it back 
 
 AZURE_CLIENT_ID=`az ad sp list --display-name "velero-navneet" --query '[0].appId' -o tsv`
 
@@ -79,7 +79,7 @@ velero install \
 --wait
 ```
 
-4. Validate that the Install is successfull and the backup location is available 
+4. Validate that the install is successful and the backup location is available 
 ```bash
 $ kubectl get pods -n velero    
 
@@ -93,10 +93,10 @@ NAME      PROVIDER   BUCKET/PREFIX   PHASE       LAST VALIDATED                 
 default   azure      velero          Available   2021-10-03 20:06:44 +0000 UTC   ReadWrite     true
 
 ```
-
+---
 ## vSphere with Tanzu configuration (Source cluster)
 
-1. Copy the `credentials-velero` from the Azure install (see above) to the jumpbox where the cluster will be configured. 
+1. Copy the `credentials-velero` from the Azure install (see above) to the jump box where the cluster will be configured. 
 
 2. Install velero on the source cluster using the same enviornmental variables as above - 
 
@@ -113,22 +113,22 @@ velero install \
 --default-volumes-to-restic \
 --use-restic
 ```
-Note the difference in how the images are referenced using Harbor's Proxy cache feature (if you are encountering the Docker rate limiting issue). Modify the value accordingly to use a private registry.
+Note the difference in how the images are referenced using Harbor's Proxy cache feature (if you are encountering the Docker rate-limiting issue). Modify the value accordingly to use a private registry.
 
 ```
 --plugins harbor.navneetv.com/proxy_cache/velero/velero-plugin-for-microsoft-azure
 --image   harbor.navneetv.com/proxy_cache/velero/velero:v1.7.0 
 ```
 
-3. Validate that the Install is successfull and the backup location is available 
+3. Validate that the install is successful and the backup location is available 
 ```bash
 $ kubectl get pods -n velero    
 
 NAMESPACE     NAME                                                              READY   STATUS    RESTARTS   AGE
 
-velero                         restic-mfs9v                                                          1/1     Running     0          18s
-velero                         restic-qqgt8                                                          1/1     Running     0          18s
-velero                         velero-564f9f8b9b-gcbpz                                               1/1     Running     0          18s
+velero        restic-mfs9v                                                      1/1     Running     0          18s
+velero        restic-qqgt8                                                      1/1     Running     0          18s
+velero        velero-564f9f8b9b-gcbpz                                           1/1     Running     0          18s
 
 $ velero backup-location get                                                                                                                                       
 
@@ -136,12 +136,38 @@ NAME      PROVIDER   BUCKET/PREFIX   PHASE       LAST VALIDATED                 
 default   azure      velero          Available   2021-10-03 16:45:47 -0400 EDT   ReadWrite     true
 ```
 
+---
+## Backup on the source cluster
+
+
+
+---
+## Restore on the destination cluster
+
+To make sure that Restic volumnes get mapped to the correct destination storage class, create a configmap similar to the one below on the destination cluster before perfroming a restore. 
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: change-storage-class-config
+  namespace: velero
+  labels:
+    velero.io/plugin-config: ""
+    velero.io/change-storage-class: RestoreItemAction
+data:
+  # add 1+ key-value pairs here, where the key is the old
+  # storage class name and the value is the new storage
+  # class name.
+  tanzu: default
+  
+```
+
 
 
 ---
 
 
-3. Install Minio as gateway on the on-prem enviornment
+3. Install Minio as a gateway on the on-prem environment
 
 ```bash 
 AZURE_STORAGE_ACCOUNT_KEY=`az storage account keys list --account-name ${AZURE_STORAGE_ACCOUNT_ID} |jq -r '.[0].value'`
