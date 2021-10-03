@@ -2,7 +2,7 @@
 
 ## Azure configuration (Destination Cluster)
 
-1. Create Storage (optional)
+1. Create Object Storage (optional is not already present - Azure blob in this example)
 
 ```bash
 # Create AZURE RESOURCE GROUP
@@ -36,7 +36,7 @@ az storage container create -n $BLOB_CONTAINER\
 --account-name $AZURE_STORAGE_ACCOUNT_ID
 ```
 
-2. Prepare secret file 
+2. Create secret file with cloud and storage credentials and config.
 
 ```bash
 # Create secrets files
@@ -96,7 +96,7 @@ default   azure      velero          Available   2021-10-03 20:06:44 +0000 UTC  
 ---
 ## vSphere with Tanzu configuration (Source cluster)
 
-1. Copy the `credentials-velero` from the Azure install (see above) to the jump box where the cluster will be configured. 
+1. Copy the `credentials-velero` from the Source cluster install (see above) to the jump box where the destination cluster will be configured. 
 
 2. Install velero on the source cluster (vSphere with Tanzu in this example) using the same environment variables as above - 
 
@@ -138,9 +138,9 @@ default   azure      velero          Available   2021-10-03 16:45:47 -0400 EDT  
 
 ---
 ## Backup on the source cluster
-1. Leveraging the example provided in the velero documentation, install the application with PVs. 
+1. Leveraging the example provided in the velero documentation, install the application with PVs on the source cluster. 
 
-2. Create a backup 
+2. Create a Velero backup 
 ```shell
 $ velero backup create nginx-backup --include-namespaces nginx-example                                                                                                                                           ─╯
 Backup request "nginx-backup" submitted successfully.
@@ -256,7 +256,7 @@ data:
   
 ```
 
-1. Restore from the backup that was created previously. 
+1. Restore from the backup that was created previously on the source cluster. 
 ```
 $ velero restore create --from-backup nginx-backup
 
