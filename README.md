@@ -71,21 +71,22 @@ velero install \
 --secret-file ./credentials-velero \
 --backup-location-config   resourceGroup=$AZURE_BACKUP_RESOURCE_GROUP,subscriptionId=$AZURE_SUBSCRIPTION_ID,storageAccount=$AZURE_STORAGE_ACCOUNT_ID \
 --snapshot-location-config resourceGroup=$AZURE_BACKUP_RESOURCE_GROUP,subscriptionId=$AZURE_SUBSCRIPTION_ID \
+--features=EnableAPIGroupVersions \
+--default-volumes-to-restic \
 --use-restic \
 --wait
 ```
 
 3. Validate that the Install is successfull and the backup location is available 
 ```bash
-kubectl get pods -n velero    
+$ kubectl get pods -n velero    
 
 NAMESPACE     NAME                                                              READY   STATUS    RESTARTS   AGE
 
 velero        restic-6ft8c                                                      1/1     Running   0          30s
 velero        velero-98f54bb54-lwxhm                                            1/1     Running   0          30s
 
-
-velero backup-location get                                                                                                                                           
+$ velero backup-location get                                                                                                                                           
 NAME      PROVIDER   BUCKET/PREFIX   PHASE       LAST VALIDATED                  ACCESS MODE   DEFAULT
 default   azure      velero          Available   2021-10-03 20:06:44 +0000 UTC   ReadWrite     true
 
