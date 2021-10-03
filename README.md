@@ -1,4 +1,4 @@
-# Velero on vSphere with Tanzu (Source Cluster) and Azure (Destination Cluster)
+# Backup and Restore using Velero on vSphere with Tanzu (Source Cluster) and Azure (Destination Cluster)
 
 ## Azure configuration (Destination Cluster)
 
