@@ -1,4 +1,6 @@
-# Installing Velero on Azure (and using Minio to forward on-prem backup to the AZ storage)
+# Velero on vSphere with Tanzu (Source Cluster) and Azure (Destination Cluster)
+
+## Azure configuration (Destination Cluster)
 
 1. Create Storage (optional)
 
@@ -91,6 +93,8 @@ NAME      PROVIDER   BUCKET/PREFIX   PHASE       LAST VALIDATED                 
 default   azure      velero          Available   2021-10-03 20:06:44 +0000 UTC   ReadWrite     true
 
 ```
+
+## vSphere with Tanzu configuration (Source cluster)
 
 3. Install Minio as gateway on the on-prem enviornment
 
