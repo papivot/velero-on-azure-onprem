@@ -63,7 +63,7 @@ AZURE_CLOUD_NAME=AzurePublicCloud
 EOF
 ```
 
-3. Install Velero on the Azure cluster
+3. Install Velero on the Destination cluster (AKS in this example)
 
 ```bash
 velero install \
@@ -98,7 +98,7 @@ default   azure      velero          Available   2021-10-03 20:06:44 +0000 UTC  
 
 1. Copy the `credentials-velero` from the Azure install (see above) to the jump box where the cluster will be configured. 
 
-2. Install velero on the source cluster using the same environment variables as above - 
+2. Install velero on the source cluster (vSphere with Tanzu in this example) using the same environment variables as above - 
 
 ```bash
 velero install \
