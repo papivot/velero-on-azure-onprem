@@ -98,7 +98,7 @@ default   azure      velero          Available   2021-10-03 20:06:44 +0000 UTC  
 
 1. Copy the `credentials-velero` from the Azure install (see above) to the jump box where the cluster will be configured. 
 
-2. Install velero on the source cluster using the same enviornmental variables as above - 
+2. Install velero on the source cluster using the same environment variables as above - 
 
 ```bash
 velero install \
@@ -238,7 +238,7 @@ Restic Backups:
 ---
 ## Restore on the destination cluster
 
-To make sure that Restic volumnes get mapped to the correct destination storage class, create a configmap similar to the one below on the destination cluster before perfroming a restore. 
+To make sure that Restic volumes get mapped to the correct destination storage class, create a config map similar to the one below on the destination cluster before performing a restore. 
 ```yaml
 apiVersion: v1
 kind: ConfigMap
@@ -256,10 +256,27 @@ data:
   
 ```
 
+1. Restore from the backup that was cresated previosuly. 
+```
+$ velero restore create --from-backup nginx-backup
 
+Restore request "nginx-backup-20211003212637" submitted successfully.
+Run `velero restore describe nginx-backup-20211003212637` or `velero restore logs nginx-backup-20211003212637` for more details.
+```
+
+2. Validate the application is running successfully 
+
+```
+kubectl get pods -A 
+
+NAMESPACE       NAME                                                              READY   STATUS    RESTARTS   AGE
+...
+nginx-example   nginx-deployment-7676db6c4d-ghws5                                 2/2     Running   0          110s
+```
 
 ---
 
+### additonal steps (if using Minio as a Azure blob gateway)
 
 3. Install Minio as a gateway on the on-prem environment
 
