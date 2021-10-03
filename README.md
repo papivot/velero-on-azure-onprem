@@ -138,7 +138,101 @@ default   azure      velero          Available   2021-10-03 16:45:47 -0400 EDT  
 
 ---
 ## Backup on the source cluster
+1. Leveraging the example provided in the velero documentation, install the application with PVs. 
 
+2. Create a backup 
+```shell
+$ velero backup create nginx-backup --include-namespaces nginx-example                                                                                                                                           ─╯
+Backup request "nginx-backup" submitted successfully.
+Run `velero backup describe nginx-backup` or `velero backup logs nginx-backup` for more details.
+
+$ velero backup logs nginx-backup
+...
+
+$ velero backup get    
+
+NAME           STATUS      ERRORS   WARNINGS   CREATED                         EXPIRES   STORAGE LOCATION   SELECTOR
+nginx-backup   Completed   0        0          2021-10-03 17:14:44 -0400 EDT   29d       default            <none>
+
+$ velero backup describe nginx-backup --details                                                                                                                           
+Name:         nginx-backup
+Namespace:    velero
+Labels:       velero.io/storage-location=default
+Annotations:  velero.io/source-cluster-k8s-gitversion=v1.19.7+vmware.1
+              velero.io/source-cluster-k8s-major-version=1
+              velero.io/source-cluster-k8s-minor-version=19
+
+Phase:  Completed
+
+Errors:    0
+Warnings:  0
+
+Namespaces:
+  Included:  nginx-example
+  Excluded:  <none>
+
+Resources:
+  Included:        *
+  Excluded:        <none>
+  Cluster-scoped:  auto
+
+Label selector:  <none>
+
+Storage Location:  default
+
+Velero-Native Snapshot PVs:  auto
+
+TTL:  720h0m0s
+
+Hooks:  <none>
+
+Backup Format Version:  1.1.0
+
+Started:    2021-10-03 17:14:44 -0400 EDT
+Completed:  2021-10-03 17:15:08 -0400 EDT
+
+Expiration:  2021-11-02 17:14:44 -0400 EDT
+
+Total items to be backed up:  14
+Items backed up:              14
+
+Resource List:
+  apps/v1/Deployment:
+    - nginx-example/nginx-deployment
+  apps/v1/ReplicaSet:
+    - nginx-example/nginx-deployment-7676db6c4d
+  discovery.k8s.io/v1beta1/EndpointSlice:
+    - nginx-example/my-nginx-vfcqp
+  rbac.authorization.k8s.io/v1/RoleBinding:
+    - nginx-example/cs-rid-org-a0f60cc5-58dc-448a-8f17-a30fc58f7bb9-rbac.authorization.k8s.io-ClusterRole-view
+  rbac.authorization.k8s.io/v1beta1/RoleBinding:
+    - nginx-example/cs-rid-org-a0f60cc5-58dc-448a-8f17-a30fc58f7bb9-rbac.authorization.k8s.io-ClusterRole-view
+  v1/ConfigMap:
+    - nginx-example/istio-ca-root-cert
+  v1/Endpoints:
+    - nginx-example/my-nginx
+  v1/Namespace:
+    - nginx-example
+  v1/PersistentVolume:
+    - pvc-30b644d0-09da-4f12-bec0-06ab6070e014
+  v1/PersistentVolumeClaim:
+    - nginx-example/nginx-logs
+  v1/Pod:
+    - nginx-example/nginx-deployment-7676db6c4d-ghws5
+  v1/Secret:
+    - nginx-example/default-token-zlb6c
+  v1/Service:
+    - nginx-example/my-nginx
+  v1/ServiceAccount:
+    - nginx-example/default
+
+Velero-Native Snapshots: <none included>
+
+Restic Backups:
+  Completed:
+    nginx-example/nginx-deployment-7676db6c4d-ghws5: nginx-logs
+
+```
 
 
 ---
