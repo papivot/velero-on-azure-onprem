@@ -21,6 +21,8 @@ az storage account create \
 --https-only true \
 --kind BlobStorage \
 --access-tier Hot
+
+ZURE_STORAGE_ACCOUNT_ID=`az storage account list  --query '[0].name' -o tsv`
 ```
 
 ```bash
@@ -44,6 +46,9 @@ AZURE_CLIENT_SECRET=`az ad sp create-for-rbac \
 --role "Contributor" \
 --query 'password' -o tsv \
 --scopes /subscriptions/$AZURE_SUBSCRIPTION_ID`
+
+### remember to save the secret as you cannot retrive it back 
+
 AZURE_CLIENT_ID=`az ad sp list --display-name "velero-navneet" --query '[0].appId' -o tsv`
 
 cat << EOF  > ./credentials-velero
