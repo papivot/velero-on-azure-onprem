@@ -106,7 +106,8 @@ metadata:
     velero.io/plugin-config: ""
     velero.io/restic: RestoreItemAction
 data:
-  image: harbor.navneetv.com/proxy_cache/velero/velero-restic-restore-helper
+  image: harbor.navneetv.com/proxy_cache/velero/velero-restic-restore-helper:v1.7.0
+  # The image version should match the main velero image being used in the install above. 
   cpuRequest: 200m
   memRequest: 128Mi
   cpuLimit: 200m
@@ -116,7 +117,7 @@ data:
 Note the difference in how the images are referenced using Harbor's Proxy cache feature (if you are encountering the Docker rate-limiting issue). Modify the value accordingly to use a private registry.
 
 ```
-image   harbor.myregistry.com/proxy_cache/velero/velero-restic-restore-helper
+image   harbor.myregistry.com/proxy_cache/velero/velero-restic-restore-helper:v1.7.0
 ```
 
 ---
@@ -169,7 +170,7 @@ default   azure      velero          Available   2021-10-03 16:45:47 -0400 EDT  
 
 2. Create a Velero backup 
 ```shell
-$ velero backup create nginx-backup --include-namespaces nginx-example                                                                                                                                           ─╯
+$ velero backup create nginx-backup --include-namespaces nginx-example                                                                                                                                          
 Backup request "nginx-backup" submitted successfully.
 Run `velero backup describe nginx-backup` or `velero backup logs nginx-backup` for more details.
 
