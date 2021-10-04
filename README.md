@@ -136,6 +136,31 @@ NAME      PROVIDER   BUCKET/PREFIX   PHASE       LAST VALIDATED                 
 default   azure      velero          Available   2021-10-03 16:45:47 -0400 EDT   ReadWrite     true
 ```
 
+4. For an internet restricted env, copy the restic image to a local registry and create a `restic-restore-action-config` ConfigMap for the velero install
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: restic-restore-action-config
+  namespace: velero
+  labels:
+    velero.io/plugin-config: ""
+    velero.io/restic: RestoreItemAction
+data:
+  image: harbor.navneetv.com/proxy_cache/velero/velero-restic-restore-helper
+  cpuRequest: 200m
+  memRequest: 128Mi
+  cpuLimit: 200m
+  memLimit: 128Mi
+```
+
+Note the difference in how the images are referenced using Harbor's Proxy cache feature (if you are encountering the Docker rate-limiting issue). Modify the value accordingly to use a private registry.
+
+```
+image   harbor.myregistry.com/proxy_cache/velero/velero-restic-restore-helper
+```
+
 ---
 ## Backup on the source cluster
 1. Leveraging the example provided in the velero documentation, install the application with PVs on the source cluster. 
