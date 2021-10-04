@@ -12,7 +12,7 @@ az group create -n $AZURE_BACKUP_RESOURCE_GROUP --location eastus
 ```
 
 ```bash
-# Create STORAGE ACCOUNT (if not present already) 
+# Create STORAGE ACCOUNT (if not already exist) 
 AZURE_STORAGE_ACCOUNT_ID="velero$(uuidgen | cut -d '-' -f5 | tr '[A-Z]' '[a-z]')"
 az storage account create \
 --name $AZURE_STORAGE_ACCOUNT_ID \
@@ -23,14 +23,14 @@ az storage account create \
 --kind BlobStorage \
 --access-tier Hot
 
-# Get the AZURE_STORAGE_ACCOUNT_ID (if already exits)
+# Get the AZURE_STORAGE_ACCOUNT_ID (if it already exits)
 AZURE_STORAGE_ACCOUNT_ID=`az storage account list  --query '[0].name' -o tsv`
 ```
 
 ```bash
 BLOB_CONTAINER=velero
 
-# Create Blob container (if it does not exist already)
+# Create Blob container (if it does not already exist)
 az storage container create -n $BLOB_CONTAINER\
 --public-access off \
 --account-name $AZURE_STORAGE_ACCOUNT_ID
@@ -116,8 +116,8 @@ velero install \
 Note the difference in how the images are referenced using Harbor's Proxy cache feature (if you are encountering the Docker rate-limiting issue). Modify the value accordingly to use a private registry.
 
 ```
---plugins harbor.navneetv.com/proxy_cache/velero/velero-plugin-for-microsoft-azure
---image   harbor.navneetv.com/proxy_cache/velero/velero:v1.7.0 
+--plugins harbor.myregistry.com/proxy_cache/velero/velero-plugin-for-microsoft-azure
+--image   harbor.myregistry.com/proxy_cache/velero/velero:v1.7.0 
 ```
 
 3. Validate that the install is successful and the backup location is available 
